@@ -9,7 +9,7 @@ class MyApp(ShowBase):
         ShowBase.__init__(self)
 
         model = "m_rocket1.egg"
-        anim = "a_rocket_walk1.egg"
+        anim="rocket.pfm"
         self.fps=1.0/30.0
 
         # Load the model.
@@ -27,9 +27,13 @@ class MyApp(ShowBase):
         #attr = attr.set_flag(ShaderAttrib.F_hardware_skinning, True)
         self.actor.set_attrib(attr)
 
+        self.actor.set_instance_count(20)
+        self.actor.node().set_bounds(OmniBoundingVolume())
+        self.actor.node().set_final(True)
+
         tex=Texture()
         pfm=PfmFile()
-        pfm.read('walk.pfm')
+        pfm.read(anim)
         tex.load(pfm)
         tex.setWrapU(SamplerState.WM_clamp)
         tex.setWrapV(SamplerState.WM_clamp)
@@ -39,7 +43,7 @@ class MyApp(ShowBase):
 
         fps=30.0
         start_frame=1.0
-        num_frame=34.0
+        num_frame=35.0
         offset_frame=0.0
         self.actor.set_shader_input('frame', Vec4(fps, start_frame, num_frame, offset_frame))
         self.actor.set_shader_input('animation', tex)

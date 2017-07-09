@@ -1,0 +1,33 @@
+<CoordinateSystem> { Z-Up }
+
+<Table> {
+  <Bundle> character {
+    <Table> "<skeleton>" {
+      <Table> Bone001 {
+        <Xfm$Anim_S$> xform {
+          <Scalar> fps { 30 }
+          <Char*> order { srpht }
+          <S$Anim> h { <V> { 90 } }
+          <S$Anim> r { <V> { -90 } }
+        }
+        <Table> Bone002 {
+          <Xfm$Anim_S$> xform {
+            <Scalar> fps { 30 }
+            <Char*> order { srpht }
+            <S$Anim> h {
+              <V> {
+                -0 0.897618 3.44392 7.41909 12.6033 18.7767 25.7195
+                33.2119 41.034 48.966 56.7881 64.2805 71.2233 77.3967
+                82.5809 86.5561 89.1024 90 89.1975 86.9136 83.3333
+                78.642 73.0247 66.6667 59.7531 52.4691 45 37.5309
+                30.2469 23.3333 16.9753 11.358 6.66667 3.08642 0.80247
+                -0
+              }
+            }
+            <S$Anim> x { <V> { 10 } }
+          }
+        }
+      }
+    }
+  }
+}

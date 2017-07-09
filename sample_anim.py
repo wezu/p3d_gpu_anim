@@ -10,6 +10,8 @@ class MyApp(ShowBase):
 
         model = "m_rocket1.egg"
         anim = "a_rocket_walk1.egg"
+        joint_names='m_rocket.json'
+        self.save_pfm_as='rocket.pfm'
         self.fps=1.0/30.0
 
         # Load the model.
@@ -27,7 +29,7 @@ class MyApp(ShowBase):
 
         #self.debug_model(self.actor)
 
-        with open('m_rocket.json') as data_file:
+        with open(joint_names) as data_file:
             self.joint_names=json.load(data_file)
 
         self.pfm=PfmFile()
@@ -62,7 +64,9 @@ class MyApp(ShowBase):
             #pfm stuff
             if joint.get_name() in self.joint_names:
                 joint_id=self.joint_names.index(joint.get_name())
-                mat=ts.get_mat()
+                vt = JointVertexTransform(joint)
+                mat = Mat4()
+                vt.get_matrix(mat)
                 for i in range(4):
                     self.pfm.setPoint4(joint_id, (self.current_frame*4)+i, mat.get_row(i))
             else:
@@ -74,7 +78,7 @@ class MyApp(ShowBase):
             print ('sampling done')
             self.current_frame=1 #the 0 frame is bad for this anim
             self.doMethodLater(self.fps, self.playback, 'playback_tsk')
-            self.pfm.write('walk.pfm')
+            self.pfm.write(self.save_pfm_as)
             return task.done
         return task.again
 

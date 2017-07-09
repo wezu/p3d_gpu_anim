@@ -1,7 +1,7 @@
 import os, sys
 from fileinput import FileInput
 import json
-model_file='m_rocket1.egg'
+model_file='m_box.egg'
 
 #first run, get the joint names
 joints=set()
@@ -47,7 +47,7 @@ with FileInput(model_file, inplace=True) as f:
                 write_here = False
                 membership = {}
 
-with open('m_rocket.json', 'w') as outfile:
+with open('m_box.json', 'w') as outfile:
     json.dump(joints, outfile)
 
 

@@ -1,0 +1,444 @@
+<CoordinateSystem> { Z-Up }
+
+<Texture> Tex1 {
+  "tex/chequered.png"
+  <Scalar> format { rgb }
+  <Scalar> wrapu { repeat }
+  <Scalar> wrapv { repeat }
+  <Scalar> minfilter { linear_mipmap_linear }
+  <Scalar> magfilter { linear }
+  <Scalar> envtype { modulate }
+}
+<Group> character {
+  <Dart> { 1 }
+  <Group> Box001 {
+    <VertexPool> Box001.verts {
+      <Vertex> 0 {
+        -2.5 -2.5 2.25791e-020
+        <UV> { 0.999501 0.000499725 }
+        <Normal> { 0 0 -1 }
+        // Bone001:1
+        <Aux> joint { 1 0 0 0 }
+        <Aux> weight { 1.0 0.0 0.0 0.0 }
+      }
+      <Vertex> 1 {
+        -2.5 2.5 2.25791e-020
+        <UV> { 0.9995 0.999501 }
+        <Normal> { 0 0 -1 }
+        // Bone001:1
+        <Aux> joint { 1 0 0 0 }
+        <Aux> weight { 1.0 0.0 0.0 0.0 }
+      }
+      <Vertex> 2 {
+        2.5 2.5 -2.25791e-020
+        <UV> { 0.000499487 0.9995 }
+        <Normal> { 0 0 -1 }
+        // Bone001:1
+        <Aux> joint { 1 0 0 0 }
+        <Aux> weight { 1.0 0.0 0.0 0.0 }
+      }
+      <Vertex> 3 {
+        2.5 -2.5 -2.25791e-020
+        <UV> { 0.000499725 0.000499487 }
+        <Normal> { 0 0 -1 }
+        // Bone001:1
+        <Aux> joint { 1 0 0 0 }
+        <Aux> weight { 1.0 0.0 0.0 0.0 }
+      }
+      <Vertex> 4 {
+        -2.5 -2.5 20
+        <UV> { 0.000499487 0.000499725 }
+        <Normal> { 0 0 1 }
+        // Bone002:1
+        <Aux> joint { 0 0 0 0 }
+        <Aux> weight { 1.0 0.0 0.0 0.0 }
+      }
+      <Vertex> 5 {
+        2.5 -2.5 20
+        <UV> { 0.9995 0.000499487 }
+        <Normal> { 0 0 1 }
+        // Bone002:1
+        <Aux> joint { 0 0 0 0 }
+        <Aux> weight { 1.0 0.0 0.0 0.0 }
+      }
+      <Vertex> 6 {
+        2.5 2.5 20
+        <UV> { 0.999501 0.9995 }
+        <Normal> { 0 0 1 }
+        // Bone002:1
+        <Aux> joint { 0 0 0 0 }
+        <Aux> weight { 1.0 0.0 0.0 0.0 }
+      }
+      <Vertex> 7 {
+        -2.5 2.5 20
+        <UV> { 0.000499725 0.999501 }
+        <Normal> { 0 0 1 }
+        // Bone002:1
+        <Aux> joint { 0 0 0 0 }
+        <Aux> weight { 1.0 0.0 0.0 0.0 }
+      }
+      <Vertex> 8 {
+        -2.5 -2.5 2.25791e-020
+        <UV> { 0.000499487 -1.5 }
+        <Normal> { 0 -1 0 }
+        // Bone001:1
+        <Aux> joint { 1 0 0 0 }
+        <Aux> weight { 1.0 0.0 0.0 0.0 }
+      }
+      <Vertex> 9 {
+        2.5 -2.5 -2.25791e-020
+        <UV> { 0.9995 -1.5 }
+        <Normal> { 0 -1 0 }
+        // Bone001:1
+        <Aux> joint { 1 0 0 0 }
+        <Aux> weight { 1.0 0.0 0.0 0.0 }
+      }
+      <Vertex> 10 {
+        2.5 -2.5 10
+        <UV> { 0.9995 0.5 }
+        <Normal> { 0 -1 0 }
+        // Bone001:0.499999 Bone002:0.500001
+        <Aux> joint { 1 0 0 0 }
+        <Aux> weight { 0.499999 0.500001 0.0 0.0 }
+      }
+      <Vertex> 11 {
+        -2.5 -2.5 10
+        <UV> { 0.000499487 0.5 }
+        <Normal> { 0 -1 0 }
+        // Bone001:0.5 Bone002:0.5
+        <Aux> joint { 1 0 0 0 }
+        <Aux> weight { 0.5 0.5 0.0 0.0 }
+      }
+      <Vertex> 12 {
+        2.5 -2.5 20
+        <UV> { 0.9995 2.5 }
+        <Normal> { 0 -1 0 }
+        // Bone002:1
+        <Aux> joint { 0 0 0 0 }
+        <Aux> weight { 1.0 0.0 0.0 0.0 }
+      }
+      <Vertex> 13 {
+        -2.5 -2.5 20
+        <UV> { 0.000499487 2.5 }
+        <Normal> { 0 -1 0 }
+        // Bone002:1
+        <Aux> joint { 0 0 0 0 }
+        <Aux> weight { 1.0 0.0 0.0 0.0 }
+      }
+      <Vertex> 14 {
+        2.5 -2.5 -2.25791e-020
+        <UV> { 0.000499487 -1.5 }
+        <Normal> { 1 0 0 }
+        // Bone001:1
+        <Aux> joint { 1 0 0 0 }
+        <Aux> weight { 1.0 0.0 0.0 0.0 }
+      }
+      <Vertex> 15 {
+        2.5 2.5 -2.25791e-020
+        <UV> { 0.9995 -1.5 }
+        <Normal> { 1 0 0 }
+        // Bone001:1
+        <Aux> joint { 1 0 0 0 }
+        <Aux> weight { 1.0 0.0 0.0 0.0 }
+      }
+      <Vertex> 16 {
+        2.5 2.5 10
+        <UV> { 0.9995 0.5 }
+        <Normal> { 1 0 0 }
+        // Bone001:0.5 Bone002:0.5
+        <Aux> joint { 1 0 0 0 }
+        <Aux> weight { 0.5 0.5 0.0 0.0 }
+      }
+      <Vertex> 17 {
+        2.5 -2.5 10
+        <UV> { 0.000499487 0.5 }
+        <Normal> { 1 0 0 }
+        // Bone001:0.499999 Bone002:0.500001
+        <Aux> joint { 1 0 0 0 }
+        <Aux> weight { 0.499999 0.500001 0.0 0.0 }
+      }
+      <Vertex> 18 {
+        2.5 2.5 20
+        <UV> { 0.9995 2.5 }
+        <Normal> { 1 0 0 }
+        // Bone002:1
+        <Aux> joint { 0 0 0 0 }
+        <Aux> weight { 1.0 0.0 0.0 0.0 }
+      }
+      <Vertex> 19 {
+        2.5 -2.5 20
+        <UV> { 0.000499487 2.5 }
+        <Normal> { 1 0 0 }
+        // Bone002:1
+        <Aux> joint { 0 0 0 0 }
+        <Aux> weight { 1.0 0.0 0.0 0.0 }
+      }
+      <Vertex> 20 {
+        2.5 2.5 -2.25791e-020
+        <UV> { 0.000499487 -1.5 }
+        <Normal> { 0 1 0 }
+        // Bone001:1
+        <Aux> joint { 1 0 0 0 }
+        <Aux> weight { 1.0 0.0 0.0 0.0 }
+      }
+      <Vertex> 21 {
+        -2.5 2.5 2.25791e-020
+        <UV> { 0.9995 -1.5 }
+        <Normal> { 0 1 0 }
+        // Bone001:1
+        <Aux> joint { 1 0 0 0 }
+        <Aux> weight { 1.0 0.0 0.0 0.0 }
+      }
+      <Vertex> 22 {
+        -2.5 2.5 10
+        <UV> { 0.9995 0.5 }
+        <Normal> { 0 1 0 }
+        // Bone001:0.500001 Bone002:0.499999
+        <Aux> joint { 1 0 0 0 }
+        <Aux> weight { 0.500001 0.499999 0.0 0.0 }
+      }
+      <Vertex> 23 {
+        2.5 2.5 10
+        <UV> { 0.000499487 0.5 }
+        <Normal> { 0 1 0 }
+        // Bone001:0.5 Bone002:0.5
+        <Aux> joint { 1 0 0 0 }
+        <Aux> weight { 0.5 0.5 0.0 0.0 }
+      }
+      <Vertex> 24 {
+        -2.5 2.5 20
+        <UV> { 0.9995 2.5 }
+        <Normal> { 0 1 0 }
+        // Bone002:1
+        <Aux> joint { 0 0 0 0 }
+        <Aux> weight { 1.0 0.0 0.0 0.0 }
+      }
+      <Vertex> 25 {
+        2.5 2.5 20
+        <UV> { 0.000499487 2.5 }
+        <Normal> { 0 1 0 }
+        // Bone002:1
+        <Aux> joint { 0 0 0 0 }
+        <Aux> weight { 1.0 0.0 0.0 0.0 }
+      }
+      <Vertex> 26 {
+        -2.5 2.5 2.25791e-020
+        <UV> { 0.000499487 -1.5 }
+        <Normal> { -1 0 0 }
+        // Bone001:1
+        <Aux> joint { 1 0 0 0 }
+        <Aux> weight { 1.0 0.0 0.0 0.0 }
+      }
+      <Vertex> 27 {
+        -2.5 -2.5 2.25791e-020
+        <UV> { 0.9995 -1.5 }
+        <Normal> { -1 0 0 }
+        // Bone001:1
+        <Aux> joint { 1 0 0 0 }
+        <Aux> weight { 1.0 0.0 0.0 0.0 }
+      }
+      <Vertex> 28 {
+        -2.5 -2.5 10
+        <UV> { 0.9995 0.5 }
+        <Normal> { -1 0 0 }
+        // Bone001:0.5 Bone002:0.5
+        <Aux> joint { 1 0 0 0 }
+        <Aux> weight { 0.5 0.5 0.0 0.0 }
+      }
+      <Vertex> 29 {
+        -2.5 2.5 10
+        <UV> { 0.000499487 0.5 }
+        <Normal> { -1 0 0 }
+        // Bone001:0.500001 Bone002:0.499999
+        <Aux> joint { 1 0 0 0 }
+        <Aux> weight { 0.500001 0.499999 0.0 0.0 }
+      }
+      <Vertex> 30 {
+        -2.5 -2.5 20
+        <UV> { 0.9995 2.5 }
+        <Normal> { -1 0 0 }
+        // Bone002:1
+        <Aux> joint { 0 0 0 0 }
+        <Aux> weight { 1.0 0.0 0.0 0.0 }
+      }
+      <Vertex> 31 {
+        -2.5 2.5 20
+        <UV> { 0.000499487 2.5 }
+        <Normal> { -1 0 0 }
+        // Bone002:1
+        <Aux> joint { 0 0 0 0 }
+        <Aux> weight { 1.0 0.0 0.0 0.0 }
+      }
+    }
+    <Polygon> {
+      <RGBA> { 1 1 1 1 }
+      <TRef> { Tex1 }
+      <VertexRef> { 0 1 2 <Ref> { Box001.verts } }
+    }
+    <Polygon> {
+      <RGBA> { 1 1 1 1 }
+      <TRef> { Tex1 }
+      <VertexRef> { 2 3 0 <Ref> { Box001.verts } }
+    }
+    <Polygon> {
+      <RGBA> { 1 1 1 1 }
+      <TRef> { Tex1 }
+      <VertexRef> { 4 5 6 <Ref> { Box001.verts } }
+    }
+    <Polygon> {
+      <RGBA> { 1 1 1 1 }
+      <TRef> { Tex1 }
+      <VertexRef> { 6 7 4 <Ref> { Box001.verts } }
+    }
+    <Polygon> {
+      <RGBA> { 1 1 1 1 }
+      <TRef> { Tex1 }
+      <VertexRef> { 8 9 10 <Ref> { Box001.verts } }
+    }
+    <Polygon> {
+      <RGBA> { 1 1 1 1 }
+      <TRef> { Tex1 }
+      <VertexRef> { 10 11 8 <Ref> { Box001.verts } }
+    }
+    <Polygon> {
+      <RGBA> { 1 1 1 1 }
+      <TRef> { Tex1 }
+      <VertexRef> { 11 10 12 <Ref> { Box001.verts } }
+    }
+    <Polygon> {
+      <RGBA> { 1 1 1 1 }
+      <TRef> { Tex1 }
+      <VertexRef> { 12 13 11 <Ref> { Box001.verts } }
+    }
+    <Polygon> {
+      <RGBA> { 1 1 1 1 }
+      <TRef> { Tex1 }
+      <VertexRef> { 14 15 16 <Ref> { Box001.verts } }
+    }
+    <Polygon> {
+      <RGBA> { 1 1 1 1 }
+      <TRef> { Tex1 }
+      <VertexRef> { 16 17 14 <Ref> { Box001.verts } }
+    }
+    <Polygon> {
+      <RGBA> { 1 1 1 1 }
+      <TRef> { Tex1 }
+      <VertexRef> { 17 16 18 <Ref> { Box001.verts } }
+    }
+    <Polygon> {
+      <RGBA> { 1 1 1 1 }
+      <TRef> { Tex1 }
+      <VertexRef> { 18 19 17 <Ref> { Box001.verts } }
+    }
+    <Polygon> {
+      <RGBA> { 1 1 1 1 }
+      <TRef> { Tex1 }
+      <VertexRef> { 20 21 22 <Ref> { Box001.verts } }
+    }
+    <Polygon> {
+      <RGBA> { 1 1 1 1 }
+      <TRef> { Tex1 }
+      <VertexRef> { 22 23 20 <Ref> { Box001.verts } }
+    }
+    <Polygon> {
+      <RGBA> { 1 1 1 1 }
+      <TRef> { Tex1 }
+      <VertexRef> { 23 22 24 <Ref> { Box001.verts } }
+    }
+    <Polygon> {
+      <RGBA> { 1 1 1 1 }
+      <TRef> { Tex1 }
+      <VertexRef> { 24 25 23 <Ref> { Box001.verts } }
+    }
+    <Polygon> {
+      <RGBA> { 1 1 1 1 }
+      <TRef> { Tex1 }
+      <VertexRef> { 26 27 28 <Ref> { Box001.verts } }
+    }
+    <Polygon> {
+      <RGBA> { 1 1 1 1 }
+      <TRef> { Tex1 }
+      <VertexRef> { 28 29 26 <Ref> { Box001.verts } }
+    }
+    <Polygon> {
+      <RGBA> { 1 1 1 1 }
+      <TRef> { Tex1 }
+      <VertexRef> { 29 28 30 <Ref> { Box001.verts } }
+    }
+    <Polygon> {
+      <RGBA> { 1 1 1 1 }
+      <TRef> { Tex1 }
+      <VertexRef> { 30 31 29 <Ref> { Box001.verts } }
+    }
+  }
+  <Joint> Bone001 {
+    <Transform> {
+      <Matrix4> {
+        -1.62921e-007 0 1 0
+        -1 -4.37332e-008 -1.62921e-007 0
+        4.37332e-008 -1 0 0
+        0 0 0 1
+      }
+    }
+    <Joint> Bone002 {
+      <Transform> {
+        <Matrix4> {
+          1 0 0 0
+          0 1 0 0
+          0 0 1 0
+          10 -1.62921e-006 4.37112e-007 1
+        }
+      }
+      <VertexRef> {
+        22 29
+        <Scalar> membership { 0.499999 }
+        <Ref> { Box001.verts }
+      }
+      <VertexRef> {
+        11 28
+        <Scalar> membership { 0.5 }
+        <Ref> { Box001.verts }
+      }
+      <VertexRef> {
+        16 23
+        <Scalar> membership { 0.5 }
+        <Ref> { Box001.verts }
+      }
+      <VertexRef> {
+        10 17
+        <Scalar> membership { 0.500001 }
+        <Ref> { Box001.verts }
+      }
+      <VertexRef> {
+        4 5 6 7 12 13 18 19 24 25 30 31
+        <Scalar> membership { 1 }
+        <Ref> { Box001.verts }
+      }
+    }
+    <VertexRef> {
+      10 17
+      <Scalar> membership { 0.499999 }
+      <Ref> { Box001.verts }
+    }
+    <VertexRef> {
+      16 23
+      <Scalar> membership { 0.5 }
+      <Ref> { Box001.verts }
+    }
+    <VertexRef> {
+      11 28
+      <Scalar> membership { 0.5 }
+      <Ref> { Box001.verts }
+    }
+    <VertexRef> {
+      22 29
+      <Scalar> membership { 0.500001 }
+      <Ref> { Box001.verts }
+    }
+    <VertexRef> {
+      0 1 2 3 8 9 14 15 20 21 26 27
+      <Scalar> membership { 1 }
+      <Ref> { Box001.verts }
+    }
+  }
+}

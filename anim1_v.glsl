@@ -41,8 +41,11 @@ void main()
                  +get_mat_from_tex(current_frame, joint.z)*weight.z
                  +get_mat_from_tex(current_frame, joint.w)*weight.w;
 
+    //no per instanc matrix yet, just offset to the right
+    vec4 v = matrix *p3d_Vertex;
+    v += vec4(gl_InstanceID*25.0,0.0, 0.0, 0.0);
 
-    gl_Position = p3d_ModelViewProjectionMatrix * matrix * p3d_Vertex;
+    gl_Position = p3d_ModelViewProjectionMatrix * v;
     //gl_Position = p3d_ModelViewProjectionMatrix *  p3d_Vertex;
     color = p3d_Color;
     //color = vec4(current_frame/35.0, 0.0, 0.0, 1.0);
