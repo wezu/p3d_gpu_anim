@@ -33,7 +33,7 @@ void main()
     float num_frame=frame.z;
     float offset_frame=frame.w;
 
-    float current_frame=start_frame+mod(floor(osg_FrameTime*fps),num_frame);
+    float current_frame=start_frame+mod(floor((osg_FrameTime+gl_InstanceID)*fps),num_frame);
 
 
     mat4 matrix = get_mat_from_tex(current_frame, joint.x)*weight.x
