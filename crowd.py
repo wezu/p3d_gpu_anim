@@ -106,7 +106,7 @@ class Crowd(object):
             self.anim_data.set_element(n, actor.anim_data)
         return task.again
 
-    def _load_shader(self, v_shader, f_shader, define=None, version='#version 130'):
+    def _load_shader(self, v_shader, f_shader, define=None, version='#version 140'):
         # check if we already have a shader like that
         if (v_shader, f_shader, str(define)) in self.shader_cache:
             return self.shader_cache[(v_shader, f_shader, str(define))]

@@ -1,4 +1,4 @@
-#version 130
+#version 140
 
 in vec4 p3d_Vertex;
 in vec4 p3d_Color;
