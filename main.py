@@ -42,10 +42,13 @@ class MyApp(ShowBase):
             actor.pose(1)
 
         #hack, because else I'm to stupid to make 10 rows of 5 models, ignore pls
-        crowd_iterator=iter(self.crowd)
+        #crowd_iterator=iter(self.crowd)
+        i=0
         for x in range(5):
             for y in range(10):
-                crowd_iterator.__next__().set_pos(x*30,y*40, 0)
+                self.crowd[i].set_pos(x*30,y*40, 0)
+                i+=1
+                #crowd_iterator.__next__().set_pos(x*30,y*40, 0)
 
         for i in range(10):
             self.accept(str(i), self.play_for_row, [i])
