@@ -30,13 +30,14 @@ class MyApp(ShowBase):
         addInstructions(0.06, "WASD or mouse1 to move the camera, mouse3 to rotate")
         addInstructions(0.12, "1-9 to make a row of characters play 'walk' once in sync")
         addInstructions(0.18, "0 to make the first row of characters loop 'walk' out of sync")
+        addInstructions(0.24, "SPACE to make them all move")
 
 
         self.crowd=Crowd(model=model,
                         anim_texture=anim_texture,
                         animations={'walk':[1, 34]},
                         num_actors=50,
-                        frame_blend=False)#set to True for a big slowdown
+                        frame_blend=True)#set to True for a big slowdown
 
         for actor in self.crowd:
             actor.pose(1)
@@ -52,6 +53,12 @@ class MyApp(ShowBase):
 
         for i in range(10):
             self.accept(str(i), self.play_for_row, [i])
+
+        self.accept('space', self.play_all)
+
+    def play_all(self):
+        for actor in self.crowd:
+            actor.loop('walk', random.randint(15, 60), False)
 
 
     def play_for_row(self, id):
