@@ -1,60 +1,43 @@
 from panda3d.core import *
 from direct.interval.MetaInterval import Sequence
-from direct.interval.FunctionInterval import Func, Wait
-import random
+from direct.interval.FunctionInterval import Func
+from direct.interval.FunctionInterval import Wait
+from random import random
 from math import floor
 
-class CrowdActor(object):
-    def __init__(self, id, animations):
-        self.animations=animations
-        self.id=id
-        self.node=NodePath('CrowdActor_'+str(id))
-
-        self.anim_data=Vec4(0.0, 1.0, 30.0, 0.0) #start_frame, num_frame, fps, time_offset
-        self.seq=None
-        self.time=globalClock.get_frame_time()
-
-
-    def __getattr__(self,attr):
-        return self.node.__getattribute__(attr)
-
-    def loop(self, name, fps=30.0, sync=True) :
-        if self.seq:
-            self.seq.finish()
-            self.seq=None
-        if sync:
-            sync=0.0
-        else:
-            sync=random.random()
-        self.time=sync-globalClock.get_frame_time()
-        self.anim_data=Vec4(self.animations[name][0],
-                            self.animations[name][1],
-                            fps,
-                            self.time)
-
-    def play(self, name, fps=30.0, sync=True):
-        self.loop(name, fps, sync)
-        time= float(self.animations[name][1])/float(fps)
-        self.seq=Sequence(Wait(time), Func(self.stop))
-        self.seq.start()
-
-    def pose(self, frame_number):
-        self.anim_data=Vec4(frame_number, 1.0, 0.0, 0.0)
-
-    def stop(self):
-        start_frame=self.anim_data[0]
-        num_frame=self.anim_data[1]
-        fps=self.anim_data[2]
-        offset_time=self.anim_data[3]
-        time=globalClock.get_frame_time()
-        current_frame=int(start_frame + floor((time+offset_time)*fps)%num_frame)
-
-        self.pose(current_frame)
-
-
+__author__ = "wezu"
+__copyright__ = "Copyright 2017"
+__license__ = "ISC"
+__version__ = "0.13"
+__email__ = "wezu.dev@gmail.com"
+__all__ = ['Crowd']
 
 
 class Crowd(object):
+    """Class allows to make multiple hardware animated and instanced actors.
+    For custom use one probably needs to alter the shaders (included):
+    shaders/anim_v.glsl and shaders/anim_f.glsl
+
+    Once a Crowd is created you can controll individual actors by index
+    my_crowd=Crowd(...)
+    my_crowd[12].set_pos(...)
+    my_crowd[7].set_hpr(...)
+    my_crowd[1].play(...)
+
+    The object retured by __getitem__ ( [] brackets) is a CrowdActor,
+    it uses NodePath methods (and has a NodePath inside if you need it
+    eg. my_crowd[0].node), it also has play(), loop(), pose(), stop(),
+    and get_current_frame() functions.
+
+    You Should never create a CrowdActor by yourself, it will do nothing
+    without a Crowd controling it.
+
+    model        - a loaded model (with the proper joint and weight vertex attributes)
+    anim_texture - a loaded texture with the animation data
+    animations   - a dict with the names of animations as keys and [start_frame, number_of_frames] as value
+    num_actors   -initial number of actor instances
+    frame_blend  -True/False should inter frame blending be used
+    """
     def __init__(self, model, anim_texture, animations, num_actors, frame_blend=False):
         #load the model, instance it and set omni bounds
         self.model=model
@@ -64,6 +47,7 @@ class Crowd(object):
         #set the shader
         self.shader_cache={}
         shader_define={'NUM_ACTORS':num_actors}
+        self.frame_blend=frame_blend
         if frame_blend:
             shader_define['FRAME_BLEND']=1
         self.model.set_shader(self._load_shader(v_shader='shaders/anim_v.glsl',
@@ -99,6 +83,34 @@ class Crowd(object):
         self.actors=[CrowdActor(i, animations) for i in range(num_actors)]
 
         taskMgr.add(self._update, "crowd_update", sort=-50)
+
+    def set_count(self, target_actors):
+        """Set the number of actor instances to target_actors
+        """
+        current_actors=len(self.actors)
+        #add actors if needed
+        while current_actors < target_actors:
+            self.actors.append(CrowdActor(current_actors, self.animations))
+            current_actors=len(self.actors)
+        #remove actors if needed
+        self.actors=self.actors[:target_actors]
+
+    def reparent_to(self, node):
+        """Reparents the Crowd to a node for rendering (usually render)
+        No transformations are used.
+        """
+        self.model.reparent_to(node)
+
+    def set_frame_blend(self, state=True):
+        """ If state is True turns inter frame blending on, else turns it off
+        """
+        self.frame_blend=state
+        shader_define={'NUM_ACTORS':len(self.actors)}
+        if state:
+            shader_define['FRAME_BLEND']=1
+        self.model.set_shader(self._load_shader(v_shader='shaders/anim_v.glsl',
+                                                f_shader='shaders/anim_f.glsl',
+                                                define=shader_define))
 
     def _update(self, task):
         for n, actor in enumerate(self.actors):
@@ -140,3 +152,78 @@ class Crowd(object):
     def __iter__(self):
         for actor in self.actors:
             yield actor
+
+    def __del__(self):
+        for actor in self.actors:
+            if actor.seq:
+                actor.seq.finish()
+                actor.seq=None
+            actor.node.remove_node()
+
+
+class CrowdActor(object):
+    """CrowdActor is a helper class for the Crowd class.
+    You Should never create a CrowdActor by yourself, it will do nothing
+    without a Crowd controling it.
+
+    You can use NodePath methods on a CrowdActor (not recomended to use remove_node())
+    or get the NodePath directly (eg. my_crowd[0].node).
+    """
+    def __init__(self, id, animations):
+        self.animations=animations
+        self.id=id
+        self.node=NodePath('CrowdActor_'+str(id))
+        self.anim_data=Vec4(0.0, 1.0, 30.0, 0.0) #start_frame, num_frame, fps, time_offset
+        self.seq=None
+        self.time=globalClock.get_frame_time()
+
+    def __getattr__(self,attr):
+        """Delegate the function call to the internal NodePath
+        """
+        return self.node.__getattribute__(attr)
+
+    def loop(self, name, fps=30.0, sync=True):
+        """Play the 'name' animation in a loop at 'fps' frames per second speed.
+        if sync is False the animation will start at a random frame
+        """
+        if self.seq:
+            self.seq.finish()
+            self.seq=None
+        if sync:
+            sync=0.0
+        else:
+            sync=random()
+        self.time=sync-globalClock.get_frame_time()
+        self.anim_data=Vec4(self.animations[name][0],
+                            self.animations[name][1],
+                            fps,
+                            self.time)
+
+    def play(self, name, fps=30.0, sync=True):
+        """Play the 'name' animation ONCE at 'fps' frames per second speed.
+        if sync is False the animation will start at a random frame
+        """
+        self.loop(name, fps, sync)
+        time= float(self.animations[name][1])/float(fps)
+        self.seq=Sequence(Wait(time), Func(self.stop))
+        self.seq.start()
+
+    def pose(self, frame_number):
+        """Pause the playback on frame_number
+        """
+        self.anim_data=Vec4(frame_number, 1.0, 0.0, 0.0)
+
+    def get_current_frame(self):
+        """Returns the currently played frame (if a animation is playing/looping)
+        """
+        start_frame=self.anim_data[0]
+        num_frame=self.anim_data[1]
+        fps=self.anim_data[2]
+        offset_time=self.anim_data[3]
+        time=globalClock.get_frame_time()
+        return int(start_frame + floor((time+offset_time)*fps)%num_frame)
+
+    def stop(self):
+        """Pause the playback, there's no 'resume' so the function name is not 'pause'
+        """
+        self.pose(self.get_current_frame())
