@@ -3,119 +3,74 @@ from direct.task import Task
 from direct.actor.Actor import Actor
 from panda3d.core import *
 import json
+import sys
 
 class MyApp(ShowBase):
     def __init__(self):
         ShowBase.__init__(self)
 
-        model = "m_rocket1.egg"
-        anim = "a_rocket_walk1.egg"
-        joint_names='m_rocket.json'
-        self.save_pfm_as='rocket.pfm'
-        self.fps=1.0/30.0
+        model = "gpu_rocket.egg"
+        anim = {'walk':'a_rocket_walk1.egg',
+                'kneel':'a_rocket_kneel.egg'}
+        self.save_pfm_as='rocket_anim.pfm'
+
 
         # Load the model.
-        self.actor = Actor(model, {"walk": anim})
-        self.actor.reparent_to(self.render)
-        #self.actor.setBlend(frameBlend = True)
-        #self.actor.loop("walk")
+        self.actor = Actor(model, anim)
+        self.actor.reparent_to(render)
 
-        ## Load the shader to perform the skinning.
-        ## Also tell Panda that the shader will do the skinning, so
-        ## that it won't transform the vertices on the CPU.
-        attr = ShaderAttrib.make(Shader.load(Shader.SLGLSL, "anim_v.glsl", "anim_f.glsl"))
-        attr = attr.set_flag(ShaderAttrib.F_hardware_skinning, True)
-        self.actor.set_attrib(attr)
+        tag=self.actor.get_child(0).get_tag('joint_names')
+        self.joint_names=json.loads(tag.replace('\n', '"'))
 
-        #self.debug_model(self.actor)
-
-        with open(joint_names) as data_file:
-            self.joint_names=json.load(data_file)
-
+        num_joint=len(self.actor.getJoints())
+        total_frames=0
+        self.anim_dict={}
+        for anim_name in anim:
+            num_frames=self.actor.getNumFrames(anim_name)
+            self.anim_dict[anim_name]=[total_frames, num_frames]
+            total_frames+=num_frames
+        #make the pfm file, add a bit of padding to get power-of-2 size
         self.pfm=PfmFile()
-        self.pfm.clear(x_size=128, y_size=1024, num_channels=4)
+        x_size=2**(num_joint-1).bit_length()
+        y_size=2**((total_frames*4)-1).bit_length()
+        self.pfm.clear(x_size=x_size, y_size=y_size, num_channels=4)
 
+        self.current_anim=list(self.anim_dict)[0]
+        self.current_anim_index=0
+        self.last_anim_length=0
+        self.current_anim_length=self.actor.getNumFrames(self.current_anim)
         self.current_frame=0
-        self.anim=[]
-
         self.joints=self.actor.getJoints()
+        taskMgr.add(self.sample, "sample_task")
 
-        self.doMethodLater(self.fps, self.sample, 'sample_tsk')
-
-    def playback(self, task):
-        print('playback at',self.current_frame )
-        for id, joint in enumerate(self.joints):
-            self.actor.freezeJoint("modelRoot", joint.get_name(), transform =  self.anim[self.current_frame][id])
-        self.current_frame+=1
-        if self.current_frame > self.actor.getNumFrames('walk'):
-            self.current_frame=1
-
-        return task.again
 
     def sample(self, task):
-        print('sample at',self.current_frame )
-        self.actor.pose("walk", self.current_frame)
+        self.actor.pose(self.current_anim, self.current_frame)
+        offset=self.current_anim_index*self.last_anim_length*4
 
-        anim={}
         for id, joint in enumerate(self.joints):
-            #print(joint.get_name())
-            ts=joint.get_transform_state()
-            anim[id]=ts
-            #pfm stuff
             if joint.get_name() in self.joint_names:
                 joint_id=self.joint_names.index(joint.get_name())
                 vt = JointVertexTransform(joint)
                 mat = Mat4()
                 vt.get_matrix(mat)
                 for i in range(4):
-                    self.pfm.setPoint4(joint_id, (self.current_frame*4)+i, mat.get_row(i))
-            else:
-                print ('Missing:',joint.get_name() )
-        self.anim.append(anim)
+                    self.pfm.setPoint4(joint_id,(self.current_frame*4)+i+offset,mat.get_row(i))
 
         self.current_frame+=1
-        if self.current_frame > self.actor.getNumFrames('walk'):
-            print ('sampling done')
-            self.current_frame=1 #the 0 frame is bad for this anim
-            self.doMethodLater(self.fps, self.playback, 'playback_tsk')
-            self.pfm.write(self.save_pfm_as)
-            return task.done
+        if self.current_frame > self.current_anim_length:
+            self.last_anim_length=self.current_anim_length
+            self.current_anim_index+=1
+            if self.current_anim_index >= len(self.anim_dict):
+                self.pfm.write(self.save_pfm_as)
+                print('all done')
+                sys.exit()
+            else:
+                self.current_anim=list(self.anim_dict)[self.current_anim_index]
+                self.current_anim_length=self.actor.getNumFrames(self.current_anim)
+                self.current_frame=0
         return task.again
-
-    def debug_model(self, actor):
-        """
-        [14:24] <rdb> wezu: GeomVertexData has a getTransformTable();
-                    TransformTable has a getTransform(n), which returns
-                    JointVertexTransform, which has getJoint()
-        [14:24] <rdb> The n in getTransform(n) is the index, I think.
-        """
-        mesh=actor._Actor__geomNode
-        #mesh.ls() returns:
-        #PandaNode character S:(ShaderAttrib)
-        #    Character __Actor_modelRoot
-        #        GeomNode  (1 geoms: S:(TextureAttrib TransparencyAttrib))
-        #so this is the 'real' geomNode
-        geom_node = mesh.get_child(0).get_child(0).node()
-        if geom_node.isGeomNode():
-            for geom in geom_node.get_geoms():
-                vdata = geom.get_vertex_data()
-
-                '''anim_spec = GeomVertexAnimationSpec()
-                anim_spec.set_hardware(4, True)
-                format = GeomVertexFormat(vdata.get_format())
-                format.set_animation(anim_spec)
-                new_vdata = vdata.convert_to(GeomVertexFormat.register_format(format))''' #crash???
-
-                table = vdata.get_transfom_table() #always returns None :(
-                print (table)
-                if table is not None:
-                    for id, transform in enumerate(table.get_transforms()):
-                        name = transform.get_joint.get_name()
-                        print (f'joint {name} {id}')
-                else:
-                    print ("No transform table!")
 
 
 app = MyApp()
-app.trackball.node().setPos(0, 50, -5)
 app.run()

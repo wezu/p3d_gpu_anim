@@ -24,7 +24,7 @@ class MyApp(ShowBase):
 
         #add some light
         spot = Spotlight("spot")
-        spot.set_color((0.9, 0.9, 0.75, 1))
+        spot.set_color((1.0, 1.0, 0.85, 1))
         spot.set_exponent(16)
         spot.get_lens().set_near_far(5, 400)
         spot.get_lens().set_fov(70)
@@ -42,9 +42,9 @@ class MyApp(ShowBase):
         addInstructions(0.30, "[TAB] to turn inter frame blending on/off")
 
         #make the crowd
-        self.crowd=Crowd(model=loader.load_model("m_rocket1.egg"),
-                        anim_texture=loader.load_texture("rocket.pfm"),
-                        animations={'walk':[1, 34]},
+        self.crowd=Crowd(model=loader.load_model("gpu_rocket.egg"),
+                        anim_texture=loader.load_texture("rocket_anim.pfm"),
+                        animations={'walk':[1, 34], 'kneel':[36, 59]}, #some padding was needed to make the anims loop ok
                         num_actors=50,
                         frame_blend=False)#set to True for a big slowdown
         #reparent the crowd to render
@@ -76,15 +76,18 @@ class MyApp(ShowBase):
 
     def play_all(self):
         for actor in self.crowd:
-            actor.loop('walk', random.randint(15, 60), False)
+            actor.set_h(random.randint(0, 360))
+            actor.loop('kneel', random.randrange(30, 60), False)
 
 
     def play_for_row(self, id):
         for i, actor in enumerate(self.crowd):
             if i%10==id:
                 if id == 0:
+                    actor.set_h(0)
                     actor.loop('walk', 30.0, False)
                 else:
+                    actor.set_h(0)
                     actor.play('walk', 30.0, True)
 
 app = MyApp()

@@ -28,10 +28,10 @@ out vec3 vpos;
 mat4 get_mat_from_tex( int current_frame, int joint_index)
     {
     return mat4(
-                texelFetch(anim_texture, ivec2(joint_index, 1023-(current_frame)*4 ),0),
-                texelFetch(anim_texture, ivec2(joint_index, 1023-(current_frame)*4-1),0),
-                texelFetch(anim_texture, ivec2(joint_index, 1023-(current_frame)*4-2),0),
-                texelFetch(anim_texture, ivec2(joint_index, 1023-(current_frame)*4-3),0)
+                texelFetch(anim_texture, ivec2(joint_index, MAX_Y-(current_frame)*4 ),0),
+                texelFetch(anim_texture, ivec2(joint_index, MAX_Y-(current_frame)*4-1),0),
+                texelFetch(anim_texture, ivec2(joint_index, MAX_Y-(current_frame)*4-2),0),
+                texelFetch(anim_texture, ivec2(joint_index, MAX_Y-(current_frame)*4-3),0)
                 );
     }
 
@@ -39,23 +39,23 @@ mat4 get_blend_mat(int current_frame, int joint_index, float blend)
     {
     return mat4(
                 mix(
-                    texelFetch(anim_texture, ivec2(joint_index, 1023-(current_frame)*4 ),0),
-                    texelFetch(anim_texture, ivec2(joint_index, 1023-(current_frame+1)*4 ),0),
+                    texelFetch(anim_texture, ivec2(joint_index, MAX_Y-(current_frame)*4 ),0),
+                    texelFetch(anim_texture, ivec2(joint_index, MAX_Y-(current_frame+1)*4 ),0),
                     blend
                     ),
                 mix(
-                    texelFetch(anim_texture, ivec2(joint_index, 1023-(current_frame)*4 -1),0),
-                    texelFetch(anim_texture, ivec2(joint_index, 1023-(current_frame+1)*4 -1),0),
+                    texelFetch(anim_texture, ivec2(joint_index, MAX_Y-(current_frame)*4 -1),0),
+                    texelFetch(anim_texture, ivec2(joint_index, MAX_Y-(current_frame+1)*4 -1),0),
                     blend
                     ),
                 mix(
-                    texelFetch(anim_texture, ivec2(joint_index, 1023-(current_frame)*4 -2 ),0),
-                    texelFetch(anim_texture, ivec2(joint_index, 1023-(current_frame+1)*4 -2),0),
+                    texelFetch(anim_texture, ivec2(joint_index, MAX_Y-(current_frame)*4 -2 ),0),
+                    texelFetch(anim_texture, ivec2(joint_index, MAX_Y-(current_frame+1)*4 -2),0),
                     blend
                     ),
                 mix(
-                    texelFetch(anim_texture, ivec2(joint_index, 1023-(current_frame)*4 -3),0),
-                    texelFetch(anim_texture, ivec2(joint_index, 1023-(current_frame+1)*4 -3),0),
+                    texelFetch(anim_texture, ivec2(joint_index, MAX_Y-(current_frame)*4 -3),0),
+                    texelFetch(anim_texture, ivec2(joint_index, MAX_Y-(current_frame+1)*4 -3),0),
                     blend
                     )
                 );
@@ -92,7 +92,7 @@ void main()
 
     texcoord = p3d_MultiTexCoord0;
 
-    mat3 normal_matrix=mat3(matrix_data[gl_InstanceID])*mat3(anim_matrix)*mat3(p3d_ViewMatrix);
+    mat3 normal_matrix=mat3(p3d_ViewMatrix)*mat3(matrix_data[gl_InstanceID])*mat3(anim_matrix);
     T=normal_matrix * p3d_Tangent;
     B=normal_matrix * p3d_Binormal;
     N=normal_matrix * p3d_Normal;

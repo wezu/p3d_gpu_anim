@@ -44,15 +44,6 @@ class Crowd(object):
         self.model.set_instance_count(num_actors)
         self.model.node().set_bounds(OmniBoundingVolume())
         self.model.node().set_final(True)
-        #set the shader
-        self.shader_cache={}
-        shader_define={'NUM_ACTORS':num_actors}
-        self.frame_blend=frame_blend
-        if frame_blend:
-            shader_define['FRAME_BLEND']=1
-        self.model.set_shader(self._load_shader(v_shader='shaders/anim_v.glsl',
-                                                f_shader='shaders/anim_f.glsl',
-                                                define=shader_define))
 
         #make sure the animation texture is set up right
         self.anim_texture=anim_texture
@@ -61,7 +52,20 @@ class Crowd(object):
         self.anim_texture.set_magfilter(SamplerState.FT_nearest)
         self.anim_texture.set_minfilter(SamplerState.FT_nearest)
         self.anim_texture.set_format(Texture.F_rgba32)
-        #send it to the shader
+
+        #set the shader
+        self.shader_cache={}
+        shader_define={'NUM_ACTORS':num_actors,
+                       'MAX_Y':self.anim_texture.get_y_size()-1}
+        self.frame_blend=frame_blend
+        if frame_blend:
+            shader_define['FRAME_BLEND']=1
+        self.model.set_shader(self._load_shader(v_shader='shaders/anim_v.glsl',
+                                                f_shader='shaders/anim_f.glsl',
+                                                define=shader_define))
+
+
+        #send the tex to the shader
         self.model.set_shader_input('anim_texture', self.anim_texture)
 
         #make an array of mat4 for each actor
@@ -105,7 +109,8 @@ class Crowd(object):
         """ If state is True turns inter frame blending on, else turns it off
         """
         self.frame_blend=state
-        shader_define={'NUM_ACTORS':len(self.actors)}
+        shader_define={'NUM_ACTORS':len(self.actors),
+                       'MAX_Y':self.anim_texture.get_y_size()-1}
         if state:
             shader_define['FRAME_BLEND']=1
         self.model.set_shader(self._load_shader(v_shader='shaders/anim_v.glsl',

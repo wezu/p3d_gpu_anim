@@ -16,7 +16,7 @@ class CameraControler (DirectObject):
         self.initial_offset=offset
 
         self.last_mouse_pos=Vec2(0,0)
-        self.speed=speed*600.0
+        self.speed=speed*100.0
         self.move_speed=100.0*speed
         self.zoom_speed=zoom_speed*5.0
         self.zoom = 0.0
@@ -55,7 +55,7 @@ class CameraControler (DirectObject):
         base.camera.look_at(self.node)
 
     def set_speed(self, speed):
-        self.speed=speed*6000.0
+        self.speed=speed*100.0
 
     def set_zoom_speed(self, speed):
         self.zoom_speed=speed*5.0
@@ -104,7 +104,7 @@ class CameraControler (DirectObject):
                 self.gimbal.set_p(min(max(p, -40.0), 40.0))
                 self.node.set_h(self.node.get_h()- delta[0]*self.speed)
             if self.key_map['move']:
-                self.node.set_y(self.node,delta[1]*self.move_speed*10.0)
-                self.node.set_x(self.node,delta[0]*self.move_speed*10.0)
+                self.node.set_y(self.node,delta[1]*self.move_speed)
+                self.node.set_x(self.node,delta[0]*self.move_speed)
 
         return task.again
