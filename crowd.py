@@ -62,7 +62,6 @@ class Crowd(object):
         self.anim_texture.set_format(Texture.F_rgba32)
 
         #set the shader
-        self.shader_cache={}
         shader_define={'NUM_ACTORS':num_actors,
                        'MAX_Y':self.anim_texture.get_y_size()-1}
         self.frame_blend=frame_blend
@@ -100,7 +99,7 @@ class Crowd(object):
         #list of actor nodes, so one can use crowd[12].play('some_anim')
         self.actors=[CrowdActor(i, self.animations) for i in range(num_actors)]
 
-        taskMgr.add(self._update, "crowd_update", sort=-50)
+        self.task=taskMgr.add(self._update, "crowd_update", sort=-50)
 
     def set_count(self, target_actors):
         """Set the number of actor instances to target_actors
@@ -112,6 +111,7 @@ class Crowd(object):
             current_actors=len(self.actors)
         #remove actors if needed
         self.actors=self.actors[:target_actors]
+        self.model.set_instance_count(target_actors)
 
     def reparent_to(self, node):
         """Reparents the Crowd to a node for rendering (usually render)
@@ -130,10 +130,6 @@ class Crowd(object):
         self.model.set_shader(self._load_shader(v_shader='shaders/anim_v.glsl',
                                                 f_shader='shaders/anim_f.glsl',
                                                 define=shader_define))
-    def _get_json_tag(self, node, tag):
-        string=self._find_first_tag(node, tag).replace('\n', '"')
-        return json.loads(string)
-
     def _find_first_tag(self, node, tag):
         for child in node.get_children():
             if child.has_tag(tag):
@@ -151,9 +147,6 @@ class Crowd(object):
         return task.again
 
     def _load_shader(self, v_shader, f_shader, define=None, version='#version 140'):
-        # check if we already have a shader like that
-        if (v_shader, f_shader, str(define)) in self.shader_cache:
-            return self.shader_cache[(v_shader, f_shader, str(define))]
         # load the shader text
         with open(getModelPath().find_file(v_shader).to_os_specific()) as f:
             v_shader_txt = f.read()
@@ -169,8 +162,6 @@ class Crowd(object):
             f_shader_txt = f_shader_txt.replace(version, header)
         # make the shader
         shader = Shader.make(Shader.SL_GLSL, v_shader_txt, f_shader_txt)
-        # store it
-        self.shader_cache[(v_shader, f_shader, str(define))] = shader
         try:
             shader.set_filename(Shader.ST_vertex, v_shader)
             shader.set_filename(Shader.ST_fragment, f_shader)
@@ -185,13 +176,14 @@ class Crowd(object):
         for actor in self.actors:
             yield actor
 
-    def __del__(self):
-        for actor in self.actors:
-            if actor.seq:
-                actor.seq.finish()
-                actor.seq=None
-            actor.node.remove_node()
-
+    def remove(self):
+        """Remove the whole thing
+        """
+        taskMgr.remove(self.task)
+        self.model.remove_node()
+        self.actors=None
+        self.matrix_data=None
+        self.anim_data=None
 
 class CrowdActor(object):
     """CrowdActor is a helper class for the Crowd class.
@@ -259,3 +251,13 @@ class CrowdActor(object):
         """Pause the playback, there's no 'resume' so the function name is not 'pause'
         """
         self.pose(self.get_current_frame())
+
+    def __del__(self):
+        """Clean up"""
+        try:
+            if self.seq:
+                self.seq.finish()
+            self.seq=None
+            self.node.remove_node()
+        except:
+            pass

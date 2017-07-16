@@ -70,6 +70,7 @@ class MyApp(ShowBase):
 
     def flip_frameblend(self):
         self.crowd.set_frame_blend(not self.crowd.frame_blend)
+        print("Frame blend:", self.crowd.frame_blend)
 
     def play_all(self):
         for actor in self.crowd:
