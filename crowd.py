@@ -62,14 +62,14 @@ class Crowd(object):
         self.anim_texture.set_format(Texture.F_rgba32)
 
         #set the shader
-        shader_define={'NUM_ACTORS':num_actors,
+        self.shader_define={'NUM_ACTORS':num_actors,
                        'MAX_Y':self.anim_texture.get_y_size()-1}
         self.frame_blend=frame_blend
         if frame_blend:
-            shader_define['FRAME_BLEND']=1
+            self.shader_define['FRAME_BLEND']=1
         self.model.set_shader(self._load_shader(v_shader='shaders/anim_v.glsl',
                                                 f_shader='shaders/anim_f.glsl',
-                                                define=shader_define))
+                                                define=self.shader_define))
 
 
         #send the tex to the shader
@@ -98,8 +98,17 @@ class Crowd(object):
 
         #list of actor nodes, so one can use crowd[12].play('some_anim')
         self.actors=[CrowdActor(i, self.animations) for i in range(num_actors)]
+        #list for attaching nodes
+        self.attached_nodes=[]
 
         self.task=taskMgr.add(self._update, "crowd_update", sort=-50)
+
+    def get_joint_id(self, joint_name):
+        if hasattr(self, 'joint_names'):
+            return self.joint_names.index(joint_name)
+        else:
+            self.joint_names=self._find_first_tag(self.model, 'joint_names').replace('\n', ' ').split()
+            return self.joint_names.index(joint_name)
 
     def set_count(self, target_actors):
         """Set the number of actor instances to target_actors
@@ -112,6 +121,24 @@ class Crowd(object):
         #remove actors if needed
         self.actors=self.actors[:target_actors]
         self.model.set_instance_count(target_actors)
+        self.shader_define={'NUM_ACTORS':target_actors,
+                       'MAX_Y':self.anim_texture.get_y_size()-1}
+        self.frame_blend=frame_blend
+        if self.frame_blend:
+            self.shader_define['FRAME_BLEND']=1
+        self.model.set_shader(self._load_shader(v_shader='shaders/anim_v.glsl',
+                                                f_shader='shaders/anim_f.glsl',
+                                                define=self.shader_define))
+
+    def attach_node_to_joint(self, node, joint_name, actor_id):
+        node.node().set_bounds(OmniBoundingVolume())
+        node.node().set_final(True)
+        node.reparent_to(self.model)
+        node.set_shader(self._load_shader(v_shader='shaders/attach_v.glsl',
+                                             f_shader='shaders/attach_f.glsl',
+                                             define=self.shader_define))
+        node.set_shader_inputs(id=actor_id, joint_id=self.get_joint_id(joint_name))
+        self.attached_nodes.append(node)
 
     def reparent_to(self, node):
         """Reparents the Crowd to a node for rendering (usually render)
@@ -123,13 +150,18 @@ class Crowd(object):
         """ If state is True turns inter frame blending on, else turns it off
         """
         self.frame_blend=state
-        shader_define={'NUM_ACTORS':len(self.actors),
+        self.shader_define={'NUM_ACTORS':len(self.actors),
                        'MAX_Y':self.anim_texture.get_y_size()-1}
         if state:
-            shader_define['FRAME_BLEND']=1
+            self.shader_define['FRAME_BLEND']=1
         self.model.set_shader(self._load_shader(v_shader='shaders/anim_v.glsl',
                                                 f_shader='shaders/anim_f.glsl',
-                                                define=shader_define))
+                                                define=self.shader_define))
+        for node in self.attached_nodes:
+            node.set_shader(self._load_shader(v_shader='shaders/attach_v.glsl',
+                                             f_shader='shaders/attach_f.glsl',
+                                             define=self.shader_define))
+
     def _find_first_tag(self, node, tag):
         for child in node.get_children():
             if child.has_tag(tag):
@@ -184,6 +216,7 @@ class Crowd(object):
         self.actors=None
         self.matrix_data=None
         self.anim_data=None
+        self.attached_nodes=None
 
 class CrowdActor(object):
     """CrowdActor is a helper class for the Crowd class.

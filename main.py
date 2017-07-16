@@ -47,6 +47,14 @@ class MyApp(ShowBase):
         #reparent the crowd to render
         self.crowd.reparent_to(render)
 
+        #attachnig to joints
+        hat=loader.load_model('hat.egg')
+        #move the hat to the right place and flatten it
+        hat.set_pos(-0.5,-2.5, 53)
+        hat.set_hpr(0,-25, 0)
+        hat.flatten_strong()
+        self.crowd.attach_node_to_joint(node=hat, joint_name='head', actor_id=11)
+
         #pose all the CrowdActors, else they might explode
         for actor in self.crowd:
             actor.pose(1)
