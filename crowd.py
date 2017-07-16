@@ -4,6 +4,7 @@ from direct.interval.FunctionInterval import Func
 from direct.interval.FunctionInterval import Wait
 from random import random
 from math import floor
+import json
 
 __author__ = "wezu"
 __copyright__ = "Copyright 2017"
@@ -38,15 +39,22 @@ class Crowd(object):
     num_actors   -initial number of actor instances
     frame_blend  -True/False should inter frame blending be used
     """
-    def __init__(self, model, anim_texture, animations, num_actors, frame_blend=False):
+    def __init__(self, model, anim_texture=None, animations=None, num_actors=1, frame_blend=False):
         #load the model, instance it and set omni bounds
-        self.model=model
+        if isinstance(model, NodePath):
+            self.model=model
+        else:
+            self.model=loader.load_model(model)
         self.model.set_instance_count(num_actors)
         self.model.node().set_bounds(OmniBoundingVolume())
         self.model.node().set_final(True)
 
         #make sure the animation texture is set up right
-        self.anim_texture=anim_texture
+        if anim_texture is not None:
+            self.anim_texture=anim_texture
+        else:
+            tex_name=self._find_first_tag(self.model, 'anim_tex')
+            self.anim_texture=loader.load_texture(tex_name)
         self.anim_texture.set_wrap_u(SamplerState.WM_clamp)
         self.anim_texture.set_wrap_v(SamplerState.WM_clamp)
         self.anim_texture.set_magfilter(SamplerState.FT_nearest)
@@ -81,10 +89,16 @@ class Crowd(object):
         self.model.set_shader_input('anim_data', self.anim_data)
 
         #dict of named animations
-        self.animations=animations
+        if animations is not None:
+            self.animations=animations
+        else:
+            _anim_names=self._find_first_tag(self.model, 'anim_names').replace('\n', ' ').split()
+            _anim_numbers=self._find_first_tag(self.model, 'anim_range').replace('\n', ' ').split()
+            _anim_numbers=[[int(i) for i in j.split(":")] for j in _anim_numbers]
+            self.animations=dict(zip(_anim_names,_anim_numbers))
 
         #list of actor nodes, so one can use crowd[12].play('some_anim')
-        self.actors=[CrowdActor(i, animations) for i in range(num_actors)]
+        self.actors=[CrowdActor(i, self.animations) for i in range(num_actors)]
 
         taskMgr.add(self._update, "crowd_update", sort=-50)
 
@@ -116,6 +130,19 @@ class Crowd(object):
         self.model.set_shader(self._load_shader(v_shader='shaders/anim_v.glsl',
                                                 f_shader='shaders/anim_f.glsl',
                                                 define=shader_define))
+    def _get_json_tag(self, node, tag):
+        string=self._find_first_tag(node, tag).replace('\n', '"')
+        return json.loads(string)
+
+    def _find_first_tag(self, node, tag):
+        for child in node.get_children():
+            if child.has_tag(tag):
+                return child.get_tag(tag)
+            else:
+                child_tag=self.find_tag(child, tag)
+                if child_tag:
+                    return child_tag
+        return None
 
     def _update(self, task):
         for n, actor in enumerate(self.actors):

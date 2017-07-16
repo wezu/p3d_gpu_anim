@@ -42,11 +42,8 @@ class MyApp(ShowBase):
         addInstructions(0.30, "[TAB] to turn inter frame blending on/off")
 
         #make the crowd
-        self.crowd=Crowd(model=loader.load_model("gpu_rocket.egg"),
-                        anim_texture=loader.load_texture("rocket_anim.pfm"),
-                        animations={'walk':[1, 34], 'kneel':[36, 59]}, #some padding was needed to make the anims loop ok
-                        num_actors=50,
-                        frame_blend=False)#set to True for a big slowdown
+        self.crowd=Crowd(model="gpu_rocket.bam", num_actors=50)
+
         #reparent the crowd to render
         self.crowd.reparent_to(render)
 
